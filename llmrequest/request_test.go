@@ -90,6 +90,10 @@ func TestRequest(t *testing.T) {
 			return tr
 		}
 
+		if tr == nil {
+			tr = http.DefaultTransport
+		}
+
 		return RoundTripperFunc(func(req *http.Request) (*http.Response, error) {
 			command, _ := http2curl.GetCurlCommand(req)
 			fmt.Println(command)
@@ -131,7 +135,7 @@ func TestRequest(t *testing.T) {
 		// https://developers.sber.ru/docs/ru/gigachat/api/reference/rest/post-chat
 		config.BaseURL = "https://gigachat.devices.sberbank.ru/api/v1"
 		config.HTTPClient = &http.Client{
-			Transport: wrapTransport(&http.Transport{}),
+			Transport: wrapTransport(nil),
 		}
 
 		client = openai.NewClientWithConfig(config)
