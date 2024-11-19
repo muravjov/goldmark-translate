@@ -29,7 +29,7 @@ func SetupSentryApp(appName string) {
 	sentryScope.AppName = appName
 }
 
-func (ss *SentryScope) ApplyToEvent(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+func (ss *SentryScope) ApplyToEvent(event *sentry.Event, hint *sentry.EventHint, client *sentry.Client) *sentry.Event {
 	event.Logger = ss.AppName
 	return event
 }
