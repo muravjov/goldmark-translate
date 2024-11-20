@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"io"
 	"os"
 	"regexp"
 	"strings"
@@ -15,10 +16,13 @@ import (
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
 )
+
+// COPY_N_PASTE of golang.org/x/website
 
 func markdownToHTMLWithDump(markdown string, myDumpFile func(filenameSuffix string, data string)) (template.HTML, error) {
 	// parser.WithHeadingAttribute allows custom ids on headings.
@@ -126,8 +130,10 @@ func replaceTabs(text []byte) []byte {
 	return buf.Bytes()
 }
 
+// COPY_N_PASTE of golang.org/x/website: end
+
 func TestGolangWebsiteMD(t *testing.T) {
-	//t.SkipNow()
+	t.SkipNow()
 
 	myLogDir := "/Users/ilya/opt/programming/golang/tmp/golang-website-logs"
 	filenamePrefix := strings.ReplaceAll("/ref/mod", "/", "-")
@@ -144,4 +150,91 @@ func TestGolangWebsiteMD(t *testing.T) {
 
 	_, err = markdownToHTMLWithDump(string(dat), myDumpFile)
 	assert.NoError(t, err)
+}
+
+func TestMarkdown2Markdown(t *testing.T) {
+	//t.SkipNow()
+
+	fName := "/Users/ilya/opt/programming/catbo/stuff/medium/Monitoring1.md"
+	data, err := os.ReadFile(fName)
+	assert.NoError(t, err)
+
+	md2md := true // false //
+
+	options := []goldmark.Option{
+		goldmark.WithParserOptions(
+			parser.WithHeadingAttribute(),
+			parser.WithAutoHeadingID(),
+		),
+		goldmark.WithExtensions(
+			extension.NewTypographer(),
+			extension.NewLinkify(
+				extension.WithLinkifyAllowedProtocols([][]byte{[]byte("http"), []byte("https")}),
+				extension.WithLinkifyEmailRegexp(regexp.MustCompile(`[^\x00-\x{10FFFF}]`)), // impossible
+			),
+			extension.DefinitionList,
+			extension.NewTable(),
+		),
+	}
+
+	if md2md {
+		options = append(options,
+			// we must overwrite default renderer (which is to html)
+			goldmark.WithRenderer(renderer.NewRenderer(renderer.WithNodeRenderers(util.Prioritized(
+				NewNodeRenderer(),
+				400,
+			)))),
+		)
+	} else {
+		options = append(options, []goldmark.Option{
+			goldmark.WithParserOptions(
+				parser.WithASTTransformers(util.Prioritized(mdTransformFunc(mdLink), 1)),
+			),
+			goldmark.WithRendererOptions(html.WithUnsafe()),
+		}...)
+	}
+
+	md := goldmark.New(options...)
+	writer := os.Stderr // os.Stdout //
+	source := data
+
+	reader := text.NewReader(source)
+	doc := md.Parser().Parse(reader)
+
+	doc.Dump(reader.Source(), 0)
+
+	err = md.Renderer().Render(ZeroBufWriter{writer}, source, doc)
+	assert.NoError(t, err)
+}
+
+// no way to implement interface on another interface
+//type ZeroBufWriter io.Writer
+
+type ZeroBufWriter struct {
+	io.Writer
+}
+
+func (w ZeroBufWriter) Available() int {
+	return 0
+}
+
+func (w ZeroBufWriter) Buffered() int {
+	return 0
+}
+
+func (w ZeroBufWriter) Flush() error {
+	return nil
+}
+
+func (w ZeroBufWriter) WriteByte(c byte) error {
+	_, err := w.Write([]byte{c})
+	return err
+}
+
+func (w ZeroBufWriter) WriteRune(r rune) (int, error) {
+	return w.WriteString(string(r))
+}
+
+func (w ZeroBufWriter) WriteString(s string) (int, error) {
+	return w.Write([]byte(s))
 }
