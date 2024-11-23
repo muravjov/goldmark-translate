@@ -16,7 +16,6 @@ import (
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
@@ -167,7 +166,9 @@ func TestMarkdown2Markdown(t *testing.T) {
 			parser.WithAutoHeadingID(),
 		),
 		goldmark.WithExtensions(
-			extension.NewTypographer(),
+			// we don't need extension.Typographer for md2md because we want to keep source text without substitutions
+			// like don't => don’t
+			//extension.NewTypographer(),
 			extension.NewLinkify(
 				extension.WithLinkifyAllowedProtocols([][]byte{[]byte("http"), []byte("https")}),
 				extension.WithLinkifyEmailRegexp(regexp.MustCompile(`[^\x00-\x{10FFFF}]`)), // impossible
@@ -180,10 +181,10 @@ func TestMarkdown2Markdown(t *testing.T) {
 	if md2md {
 		options = append(options,
 			// we must overwrite default renderer (which is to html)
-			goldmark.WithRenderer(renderer.NewRenderer(renderer.WithNodeRenderers(util.Prioritized(
+			goldmark.WithRenderer(NewRenderer(util.Prioritized(
 				NewNodeRenderer(),
 				400,
-			)))),
+			))),
 		)
 	} else {
 		options = append(options, []goldmark.Option{
@@ -191,6 +192,9 @@ func TestMarkdown2Markdown(t *testing.T) {
 				parser.WithASTTransformers(util.Prioritized(mdTransformFunc(mdLink), 1)),
 			),
 			goldmark.WithRendererOptions(html.WithUnsafe()),
+			goldmark.WithExtensions(
+				extension.NewTypographer(),
+			),
 		}...)
 	}
 
