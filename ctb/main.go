@@ -19,6 +19,7 @@ func runCLI() (exitOK bool) {
 		},
 	}
 
+	// * html2markdown
 	var llmProvider string
 	var logRequests bool
 	html2markdownCmd := &cobra.Command{
@@ -33,6 +34,22 @@ func runCLI() (exitOK bool) {
 	html2markdownCmd.Flags().BoolVar(&logRequests, "log-requests", false, "log requests to llm provider")
 
 	rootCmd.AddCommand(html2markdownCmd)
+
+	// * md2md
+	var md2html bool
+	var dumpAST bool
+
+	md2mdCmd := &cobra.Command{
+		Use:   "md2md srcfile|- dstfile|-",
+		Short: "convert markdown to markdown",
+		Run: func(cmd *cobra.Command, args []string) {
+			exitOK = md2md(md2html, dumpAST, args)
+		},
+	}
+	md2mdCmd.Flags().BoolVar(&md2html, "md2html", false, "markdown to html instead")
+	md2mdCmd.Flags().BoolVar(&dumpAST, "dumpAST", false, "dump dumps an AST tree structure to stdout")
+
+	rootCmd.AddCommand(md2mdCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		util.Errorf("CLI error: %s", err)

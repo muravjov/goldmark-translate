@@ -10,6 +10,37 @@ import (
 	"git.catbo.net/muravjov/go2023/util"
 )
 
+func openSrc(srcFilename string) ([]byte, bool) {
+	if srcFilename == "-" {
+		dat, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			util.Errorf("error while reading file %v: %v", srcFilename, err)
+			return nil, false
+		}
+		return dat, true
+	}
+
+	dat, err := os.ReadFile(srcFilename)
+	if err != nil {
+		util.Errorf("error while reading file %v: %v", srcFilename, err)
+		return nil, false
+	}
+	return dat, true
+}
+
+func openDst(dstFilename string) (*os.File, bool) {
+	if dstFilename == "-" {
+		return os.Stdout, true
+	}
+
+	f, err := os.Open(dstFilename)
+	if err != nil {
+		util.Errorf("error while opening file %v: %v", dstFilename, err)
+		return nil, false
+	}
+	return f, true
+}
+
 func html2markdown(llmProvider string, logRequests bool, args []string) bool {
 	if len(args) != 2 {
 		util.Errorf("html2markdown: strictly 2 arguments required")
@@ -18,36 +49,17 @@ func html2markdown(llmProvider string, logRequests bool, args []string) bool {
 
 	srcFilename, dstFilename := args[0], args[1]
 
-	var html string
-	if srcFilename == "-" {
-		dat, err := io.ReadAll(os.Stdin)
-		if err != nil {
-			util.Errorf("error while reading file %v: %v", srcFilename, err)
-			return false
-		}
-		html = string(dat)
-	} else {
-		dat, err := os.ReadFile(srcFilename)
-		if err != nil {
-			util.Errorf("error while reading file %v: %v", srcFilename, err)
-			return false
-		}
-		html = string(dat)
+	dat, res := openSrc(srcFilename)
+	if !res {
+		return res
 	}
+	html := string(dat)
 
-	var dstF *os.File
-	if dstFilename == "-" {
-		dstF = os.Stdout
-	} else {
-		f, err := os.Open(dstFilename)
-		if err != nil {
-			util.Errorf("error while opening file %v: %v", dstFilename, err)
-			return false
-		}
-		defer f.Close()
-
-		dstF = f
+	dstF, res := openDst(dstFilename)
+	if !res {
+		return res
 	}
+	defer dstF.Close()
 
 	client, err := llmrequest.MakeClient(llmProvider, logRequests)
 	if err != nil {
