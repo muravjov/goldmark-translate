@@ -20,6 +20,7 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 	// blocks
 
 	reg.Register(ast.KindHeading, r.renderHeading)
+	reg.Register(ast.KindFencedCodeBlock, r.renderFencedCodeBlock)
 
 	// inlines
 
@@ -36,6 +37,31 @@ func (r *nodeRenderer) renderHeading(
 	n := node.(*ast.Heading)
 	if entering {
 		_, _ = w.WriteString(strings.Repeat("#", n.Level) + " ")
+	}
+	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) writeLines(w util.BufWriter, source []byte, n ast.Node) {
+	l := n.Lines().Len()
+	for i := 0; i < l; i++ {
+		line := n.Lines().At(i)
+		w.Write(line.Value(source))
+	}
+}
+
+func (r *nodeRenderer) renderFencedCodeBlock(
+	w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+	n := node.(*ast.FencedCodeBlock)
+	if entering {
+		_, _ = w.WriteString("```")
+		language := n.Language(source)
+		if language != nil {
+			w.Write(language)
+		}
+		_, _ = w.WriteString("\n")
+		r.writeLines(w, source, n)
+	} else {
+		_, _ = w.WriteString("```")
 	}
 	return ast.WalkContinue, nil
 }
