@@ -1,6 +1,7 @@
 package markdown
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 
@@ -38,11 +39,44 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 
 }
 
+var attrNameID = []byte("id")
+var attrNameClass = []byte("class")
+
 func (r *nodeRenderer) renderHeading(
 	w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	n := node.(*ast.Heading)
 	if entering {
 		_, _ = w.WriteString(strings.Repeat("#", n.Level) + " ")
+	} else {
+		if node.Attributes() != nil {
+			_, _ = w.WriteString(" {")
+			first := true
+			for _, attr := range node.Attributes() {
+				if !first {
+					w.WriteByte(' ')
+				}
+				first = false
+
+				if bytes.Equal(attr.Name, attrNameID) {
+					w.WriteByte('#')
+				} else if bytes.Equal(attr.Name, attrNameClass) {
+					w.WriteByte('.')
+				} else {
+					_, _ = w.Write(attr.Name)
+					w.WriteByte('=')
+				}
+
+				var value []byte
+				switch typed := attr.Value.(type) {
+				case []byte:
+					value = typed
+				case string:
+					value = util.StringToReadOnlyBytes(typed)
+				}
+				_, _ = w.Write(value)
+			}
+			_, _ = w.WriteString("}")
+		}
 	}
 	return ast.WalkContinue, nil
 }

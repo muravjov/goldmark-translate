@@ -172,7 +172,7 @@ sit amet.
 `)
 		}
 
-		if true {
+		if false {
 			// SoftLineBreak
 			data = []byte(`
 This document is a detailed reference manual for Go's module system. For an
@@ -193,6 +193,14 @@ baz
 
 *foo  
 bar*`)
+		}
+
+		if true {
+			data = []byte(`
+## Introduction {#introduction}
+
+Modules are how Go manages dependencies.
+`)
 		}
 	} else {
 		var err error
