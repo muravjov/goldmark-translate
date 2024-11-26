@@ -1,10 +1,13 @@
 package markdown
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/util"
+
+	utilerr "git.catbo.net/muravjov/go2023/util"
 )
 
 type nodeRenderer struct {
@@ -21,6 +24,8 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 
 	reg.Register(ast.KindHeading, r.renderHeading)
 	reg.Register(ast.KindFencedCodeBlock, r.renderFencedCodeBlock)
+	reg.Register(ast.KindList, r.renderList)
+	reg.Register(ast.KindListItem, r.renderListItem)
 
 	// inlines
 
@@ -62,6 +67,38 @@ func (r *nodeRenderer) renderFencedCodeBlock(
 		r.writeLines(w, source, n)
 	} else {
 		_, _ = w.WriteString("```")
+	}
+	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) renderList(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+	//n := node.(*ast.List)
+	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	list, ok := n.Parent().(*ast.List)
+	if !ok {
+		utilerr.Errorf("expected list node but got: %v", n.Parent().Kind().String())
+		return ast.WalkStop, nil
+	}
+
+	if entering {
+		prefix := "- "
+		if list.IsOrdered() {
+			prefix = fmt.Sprintf("%v. ", list.Start)
+		}
+
+		_, _ = w.WriteString(prefix)
+	} else {
+		if n.NextSibling() != nil {
+			sep := "\n"
+			if !list.IsTight {
+				sep = "\n\n"
+			}
+
+			_, _ = w.WriteString(sep)
+		}
 	}
 	return ast.WalkContinue, nil
 }

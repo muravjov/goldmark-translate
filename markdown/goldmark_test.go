@@ -119,15 +119,48 @@ func TestGolangWebsiteMD(t *testing.T) {
 func TestMarkdown2Markdown(t *testing.T) {
 	//t.SkipNow()
 
-	fName := "/Users/ilya/opt/programming/catbo/stuff/medium/Monitoring1.md"
-	data, err := os.ReadFile(fName)
-	assert.NoError(t, err)
+	var data []byte
+	if true {
+		data = []byte(`
+> Lorem ipsum dolor
+sit amet.
+> - Qui *quodsi iracundia*
+> - aliquando id
+`)
 
-	md2md := true                    // false //
+		// https://spec.commonmark.org/dingus/?text=1.%20a%0A%0A%20%202.%20b%0A%0A%20%20%20%203.%20c%0A
+		// - commonmark.js parses para-s in list items into para-s
+		// - goldmark parses para-s in list itemes into TextBlock-s
+		// - both parse other types like fenced code blocks into fenced code blocks
+		data = []byte(`
+ - Qui *quodsi iracundia*
+ - aliquando id
+   - hello
+ - ~~~
+   fdsfds
+   ~~~
+`)
+
+		data = []byte(`
+2. ggg
+
+2. ddd
+2. ads
+`)
+
+	} else {
+		var err error
+		fName := "/Users/ilya/opt/programming/catbo/stuff/medium/Monitoring1.md"
+		data, err = os.ReadFile(fName)
+		assert.NoError(t, err)
+	}
+
+	md2md := true // false //
+
 	var writer io.Writer = os.Stderr // os.Stdout //
 	writer = ZeroBufWriter{writer}
 
-	err = Convert(data, writer, md2md, true)
+	err := Convert(data, writer, md2md, true)
 	assert.NoError(t, err)
 }
 
