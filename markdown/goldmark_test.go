@@ -121,18 +121,26 @@ func TestMarkdown2Markdown(t *testing.T) {
 
 	var data []byte
 	if true {
-		data = []byte(`
+
+		if false {
+			data = []byte(`
 > Lorem ipsum dolor
 sit amet.
 > - Qui *quodsi iracundia*
 > - aliquando id
 `)
 
-		// https://spec.commonmark.org/dingus/?text=1.%20a%0A%0A%20%202.%20b%0A%0A%20%20%20%203.%20c%0A
-		// - commonmark.js parses para-s in list items into para-s
-		// - goldmark parses para-s in list itemes into TextBlock-s
-		// - both parse other types like fenced code blocks into fenced code blocks
-		data = []byte(`
+		}
+
+		if true {
+			// :TODO: lists with non trivial blocks (not a para or multiple blocks)
+			// is rendered improperly
+
+			// https://spec.commonmark.org/dingus/?text=1.%20a%0A%0A%20%202.%20b%0A%0A%20%20%20%203.%20c%0A
+			// - commonmark.js parses para-s in list items into para-s
+			// - goldmark parses para-s in list itemes into TextBlock-s
+			// - both parse other types like fenced code blocks into fenced code blocks
+			data = []byte(`
  - Qui *quodsi iracundia*
  - aliquando id
    - hello
@@ -141,12 +149,16 @@ sit amet.
    ~~~
 `)
 
-		data = []byte(`
+		}
+
+		if false {
+			data = []byte(`
 2. ggg
 
 2. ddd
 2. ads
 `)
+		}
 
 	} else {
 		var err error

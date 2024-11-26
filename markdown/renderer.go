@@ -76,7 +76,7 @@ func (r *Renderer) Render(w io.Writer, source []byte, root ast.Node) error {
 			s = sF
 		}
 
-		if !entering && n.Parent() == root {
+		if !entering && n.Parent() == root && n.NextSibling() != nil {
 			_, _ = writer.WriteString("\n\n")
 		}
 
