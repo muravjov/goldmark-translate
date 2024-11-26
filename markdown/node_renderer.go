@@ -181,5 +181,13 @@ func (r *nodeRenderer) renderText(w util.BufWriter, source []byte, node ast.Node
 	n := node.(*ast.Text)
 	segment := n.Segment
 	w.Write(segment.Value(source))
+
+	if n.HardLineBreak() {
+		_, _ = w.WriteString(`\
+`)
+	} else if n.SoftLineBreak() {
+		_, _ = w.WriteString("\n")
+	}
+
 	return ast.WalkContinue, nil
 }

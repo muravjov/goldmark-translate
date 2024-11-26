@@ -160,7 +160,7 @@ sit amet.
 `)
 		}
 
-		if true {
+		if false {
 			// :TODO: blockquotes with non trivial blocks (not a para or multiple blocks)
 			// is rendered improperly: intendation with "> " needed
 			data = []byte(`
@@ -172,6 +172,28 @@ sit amet.
 `)
 		}
 
+		if true {
+			// SoftLineBreak
+			data = []byte(`
+This document is a detailed reference manual for Go's module system. For an
+introduction to creating Go projects, see [How to Write Go
+Code](/doc/code.html). For information on using modules,
+migrating projects to modules, and other topics, see the blog series starting
+with [Using Go Modules](/blog/using-go-modules).`)
+		}
+
+		if false {
+			// HardLineBreak
+			data = []byte(`
+foo  
+baz
+
+foo\
+baz
+
+*foo  
+bar*`)
+		}
 	} else {
 		var err error
 		fName := "/Users/ilya/opt/programming/catbo/stuff/medium/Monitoring1.md"
