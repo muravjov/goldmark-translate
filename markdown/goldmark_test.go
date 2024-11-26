@@ -195,11 +195,25 @@ baz
 bar*`)
 		}
 
-		if true {
+		if false {
+			// attributes:
+			// - https://github.com/yuin/goldmark#attributes
+			// - https://talk.commonmark.org/t/consistent-attribute-syntax/272
 			data = []byte(`
 ## Introduction {#introduction}
 
 Modules are how Go manages dependencies.
+`)
+		}
+
+		if true {
+			// CodeSpan like `go.mod`
+			data = []byte(`
+A module is identified by a [module path](#glos-module-path), which is declared
+in a [` + "`" + `go.mod` + "`" + ` file](#go-mod-file), together with information about the
+module's dependencies. The <dfn>module root directory</dfn> is the directory
+that contains the ` + "`" + `go.mod` + "`" + ` file. The <dfn>main module</dfn> is the module
+containing the directory where the ` + "`" + `go` + "`" + ` command is invoked.
 `)
 		}
 	} else {

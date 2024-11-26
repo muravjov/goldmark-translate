@@ -16,7 +16,6 @@ func Convert(source []byte, writer io.Writer, md2md bool, dump bool) error {
 	options := []goldmark.Option{
 		goldmark.WithParserOptions(
 			parser.WithHeadingAttribute(),
-			parser.WithAutoHeadingID(),
 		),
 		goldmark.WithExtensions(
 			// we don't need extension.Typographer for md2md because we want to keep source text without substitutions
@@ -42,6 +41,7 @@ func Convert(source []byte, writer io.Writer, md2md bool, dump bool) error {
 	} else {
 		options = append(options, []goldmark.Option{
 			goldmark.WithParserOptions(
+				parser.WithAutoHeadingID(),
 				parser.WithASTTransformers(util.Prioritized(mdTransformFunc(mdLink), 1)),
 			),
 			goldmark.WithRendererOptions(html.WithUnsafe()),

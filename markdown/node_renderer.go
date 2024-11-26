@@ -31,6 +31,7 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 
 	// inlines
 
+	reg.Register(ast.KindCodeSpan, r.renderCodeSpan)
 	reg.Register(ast.KindEmphasis, r.renderEmphasis)
 	reg.Register(ast.KindImage, r.renderImage)
 	reg.Register(ast.KindLink, r.renderLink)
@@ -144,6 +145,16 @@ func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Nod
 		}
 	}
 	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) renderCodeSpan(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	if !entering {
+		return ast.WalkContinue, nil
+	}
+	_ = w.WriteByte('`')
+	r.renderTexts(w, source, n)
+	_ = w.WriteByte('`')
+	return ast.WalkSkipChildren, nil
 }
 
 func (r *nodeRenderer) renderEmphasis(
