@@ -208,6 +208,8 @@ Modules are how Go manages dependencies.
 
 		if true {
 			// CodeSpan like `go.mod`
+			// and
+			// RawHTML like <dfn>
 			data = []byte(`
 A module is identified by a [module path](#glos-module-path), which is declared
 in a [` + "`" + `go.mod` + "`" + ` file](#go-mod-file), together with information about the

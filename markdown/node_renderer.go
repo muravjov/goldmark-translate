@@ -35,6 +35,7 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindEmphasis, r.renderEmphasis)
 	reg.Register(ast.KindImage, r.renderImage)
 	reg.Register(ast.KindLink, r.renderLink)
+	reg.Register(ast.KindRawHTML, r.renderRawHTML)
 	reg.Register(ast.KindText, r.renderText)
 	reg.Register(ast.KindString, r.renderString)
 
@@ -217,6 +218,20 @@ func (r *nodeRenderer) renderLink(w util.BufWriter, source []byte, node ast.Node
 		finishLink(w, n.Destination, n.Title)
 	}
 	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) renderRawHTML(
+	w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+	if !entering {
+		return ast.WalkSkipChildren, nil
+	}
+	n := node.(*ast.RawHTML)
+	l := n.Segments.Len()
+	for i := 0; i < l; i++ {
+		segment := n.Segments.At(i)
+		_, _ = w.Write(segment.Value(source))
+	}
+	return ast.WalkSkipChildren, nil
 }
 
 func (r *nodeRenderer) renderText(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
