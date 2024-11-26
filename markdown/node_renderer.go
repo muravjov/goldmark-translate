@@ -23,6 +23,7 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 	// blocks
 
 	reg.Register(ast.KindHeading, r.renderHeading)
+	reg.Register(ast.KindBlockquote, r.renderBlockquote)
 	reg.Register(ast.KindFencedCodeBlock, r.renderFencedCodeBlock)
 	reg.Register(ast.KindList, r.renderList)
 	reg.Register(ast.KindListItem, r.renderListItem)
@@ -42,6 +43,14 @@ func (r *nodeRenderer) renderHeading(
 	n := node.(*ast.Heading)
 	if entering {
 		_, _ = w.WriteString(strings.Repeat("#", n.Level) + " ")
+	}
+	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) renderBlockquote(
+	w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	if entering {
+		_, _ = w.WriteString("> ")
 	}
 	return ast.WalkContinue, nil
 }

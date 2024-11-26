@@ -132,9 +132,9 @@ sit amet.
 
 		}
 
-		if true {
+		if false {
 			// :TODO: lists with non trivial blocks (not a para or multiple blocks)
-			// is rendered improperly
+			// is rendered improperly: intendation with spaces needed
 
 			// https://spec.commonmark.org/dingus/?text=1.%20a%0A%0A%20%202.%20b%0A%0A%20%20%20%203.%20c%0A
 			// - commonmark.js parses para-s in list items into para-s
@@ -157,6 +157,18 @@ sit amet.
 
 2. ddd
 2. ads
+`)
+		}
+
+		if true {
+			// :TODO: blockquotes with non trivial blocks (not a para or multiple blocks)
+			// is rendered improperly: intendation with "> " needed
+			data = []byte(`
+> fdsa
+> fds
+> fdsa
+>
+> fds
 `)
 		}
 
