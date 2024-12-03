@@ -129,9 +129,11 @@ func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Nod
 	}
 
 	if entering {
-		prefix := "- "
+		var prefix string
 		if list.IsOrdered() {
-			prefix = fmt.Sprintf("%v. ", list.Start)
+			prefix = fmt.Sprintf("%v%c ", list.Start, list.Marker)
+		} else {
+			prefix = string(list.Marker) + " "
 		}
 
 		_, _ = w.WriteString(prefix)

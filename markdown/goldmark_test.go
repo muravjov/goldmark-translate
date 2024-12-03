@@ -182,7 +182,7 @@ migrating projects to modules, and other topics, see the blog series starting
 with [Using Go Modules](/blog/using-go-modules).`)
 		}
 
-		if false {
+		if true {
 			// HardLineBreak
 			data = []byte(`
 foo  
@@ -206,7 +206,7 @@ Modules are how Go manages dependencies.
 `)
 		}
 
-		if true {
+		if false {
 			// CodeSpan like `go.mod`
 			// and
 			// RawHTML like <dfn>
