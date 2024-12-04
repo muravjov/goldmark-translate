@@ -80,7 +80,11 @@ func (r *Renderer) Render(w io.Writer, source []byte, root ast.Node) error {
 		}
 
 		if !entering && n.Type() == ast.TypeBlock && n.NextSibling() != nil {
-			_, _ = writer.WriteString("\n\n")
+			sep := "\n\n"
+			if kind := n.Kind(); kind == ast.KindListItem && n.Parent().(*ast.List).IsTight {
+				sep = "\n"
+			}
+			_, _ = writer.WriteString(sep)
 			r.context.Pad(writer)
 		}
 

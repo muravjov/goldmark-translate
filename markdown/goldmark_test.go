@@ -241,6 +241,10 @@ containing the directory where the ` + "`" + `go` + "`" + ` command is invoked.
     para 1.2.2
 
 para 2
+
+* tight item 3
+* tight item 4
+
 `)
 		}
 	} else {
@@ -250,8 +254,8 @@ para 2
 		assert.NoError(t, err)
 	}
 
-	md2md := true          // false //
-	verbosePadding := true // false //
+	md2md := true           // false //
+	verbosePadding := false // true //
 
 	var writer io.Writer = os.Stderr // os.Stdout //
 	writer = ZeroBufWriter{writer}

@@ -150,15 +150,6 @@ func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Nod
 		r.context.PushStack(strings.Repeat(" ", len(prefix)))
 	} else {
 		r.context.PopStack()
-		if n.NextSibling() != nil {
-			sep := "\n"
-			if !list.IsTight {
-				sep = "\n\n"
-			}
-
-			_, _ = w.WriteString(sep)
-			r.context.Pad(w)
-		}
 	}
 	return ast.WalkContinue, nil
 }
