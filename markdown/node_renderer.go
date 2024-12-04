@@ -29,6 +29,7 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindHeading, r.renderHeading)
 	reg.Register(ast.KindBlockquote, r.renderBlockquote)
 	reg.Register(ast.KindFencedCodeBlock, r.renderFencedCodeBlock)
+	reg.Register(ast.KindHTMLBlock, r.renderHTMLBlock)
 	reg.Register(ast.KindList, r.renderList)
 	reg.Register(ast.KindListItem, r.renderListItem)
 
@@ -121,6 +122,24 @@ func (r *nodeRenderer) renderFencedCodeBlock(
 		r.writeLines(w, source, n)
 	} else {
 		_, _ = w.WriteString("```")
+	}
+	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) renderHTMLBlock(
+	w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+	n := node.(*ast.HTMLBlock)
+	if entering {
+		l := n.Lines().Len()
+		for i := 0; i < l; i++ {
+			line := n.Lines().At(i)
+			w.Write(line.Value(source))
+		}
+	} else {
+		if n.HasClosure() {
+			closure := n.ClosureLine
+			w.Write(closure.Value(source))
+		}
 	}
 	return ast.WalkContinue, nil
 }

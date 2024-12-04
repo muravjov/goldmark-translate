@@ -281,7 +281,7 @@ The number of windows in my house is
 `)
 		}
 
-		if true {
+		if false {
 			// raw text with end of lines
 			data = []byte(`
 * At ` + "`" + `go 1.17` + "`" + ` or higher:
@@ -293,6 +293,59 @@ The number of windows in my house is
      would otherwise select a different version.) This extra information enables
      [module graph pruning](#graph-pruning) and [lazy module
      loading](#lazy-loading).
+`)
+		}
+
+		if true {
+			data = []byte(`
+
+Insecure protocols (like ` + "`" + `http://` + "`" + ` and ` + "`" + `git://` + "`" + `) may only be used
+if the module path is matched by the ` + "`" + `GOINSECURE` + "`" + ` environment variable.
+
+<table id="vcs-support" class="ModTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Command</th>
+      <th>GOVCS default</th>
+      <th>Secure schemes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bazaar</td>
+      <td><code>bzr</code></td>
+      <td>Private only</td>
+      <td><code>https</code>, <code>bzr+ssh</code></td>
+    </tr>
+    <tr>
+      <td>Fossil</td>
+      <td><code>fossil</code></td>
+      <td>Private only</td>
+      <td><code>https</code></td>
+    </tr>
+    <tr>
+      <td>Git</td>
+      <td><code>git</code></td>
+      <td>Public and private</td>
+      <td><code>https</code>, <code>git+ssh</code>, <code>ssh</code></td>
+    </tr>
+    <tr>
+      <td>Mercurial</td>
+      <td><code>hg</code></td>
+      <td>Public and private</td>
+      <td><code>https</code>, <code>ssh</code></td>
+    </tr>
+    <tr>
+      <td>Subversion</td>
+      <td><code>svn</code></td>
+      <td>Private only</td>
+      <td><code>https</code>, <code>svn+ssh</code></td>
+    </tr>
+  </tbody>
+</table>
+
+As an example, consider ` + "`" + `golang.org/x/mod` + "`" + ` again.
 `)
 		}
 
