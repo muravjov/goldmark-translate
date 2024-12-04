@@ -250,7 +250,7 @@ para 2
 `)
 		}
 
-		if true {
+		if false {
 			// list custom offsets
 			data = []byte(`
 
@@ -259,6 +259,21 @@ para 2
    * The ` + "`" + `go` + "`" + ` line must be greater than or equal to the ` + "`" + `go` + "`" + ` line of all dependencies.
    * The ` + "`" + `go` + "`" + ` command no longer attempts to maintain compatibility with the previous older version of Go.
    * The ` + "`" + `go` + "`" + ` command is more careful about keeping checksums of ` + "`" + `go.mod` + "`" + ` files in the ` + "`" + `go.sum` + "`" + ` file.
+`)
+		}
+
+		if true {
+			// list breaks paragraph
+			data = []byte(`
+The number of windows in my house is
+
+11. The number of doors is 6.
+
+The number of windows in my house is
+1. The number of doors is 6.
+
+The number of windows in my house is
+* The number of doors is 6.
 `)
 		}
 

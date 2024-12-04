@@ -81,9 +81,13 @@ func (r *Renderer) Render(w io.Writer, source []byte, root ast.Node) error {
 
 		if !entering && n.Type() == ast.TypeBlock && n.NextSibling() != nil {
 			sep := "\n\n"
-			if kind := n.Kind(); kind == ast.KindListItem && n.Parent().(*ast.List).IsTight {
+			if n.Kind() == ast.KindListItem && n.Parent().(*ast.List).IsTight {
+				sep = "\n"
+			} else if list, ok := n.NextSibling().(*ast.List); ok && (!list.IsOrdered() || list.Start == 1) && !list.HasBlankPreviousLines() {
+				// In CommonMark, we do allow lists to interrupt paragraphss
 				sep = "\n"
 			}
+
 			_, _ = writer.WriteString(sep)
 			r.context.Pad(writer)
 		}
