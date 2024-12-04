@@ -81,10 +81,15 @@ func (r *Renderer) Render(w io.Writer, source []byte, root ast.Node) error {
 
 		if !entering && n.Type() == ast.TypeBlock && n.NextSibling() != nil {
 			sep := "\n\n"
-			if n.Kind() == ast.KindListItem && n.Parent().(*ast.List).IsTight {
+
+			kind := n.Kind()
+			if kind == ast.KindListItem && n.Parent().(*ast.List).IsTight {
 				sep = "\n"
 			} else if list, ok := n.NextSibling().(*ast.List); ok && (!list.IsOrdered() || list.Start == 1) && !list.HasBlankPreviousLines() {
 				// In CommonMark, we do allow lists to interrupt paragraphss
+				sep = "\n"
+			} else if kind == ast.KindHTMLBlock {
+				// htmlBlockParser puts lines and ClosureLine with "\n", so we need to add just one
 				sep = "\n"
 			}
 
