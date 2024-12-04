@@ -262,7 +262,7 @@ para 2
 `)
 		}
 
-		if true {
+		if false {
 			// list breaks paragraph
 			data = []byte(`
 The number of windows in my house is
@@ -278,6 +278,21 @@ The number of windows in my house is
 The number of windows in my house is
 
 * The number of doors is 6.
+`)
+		}
+
+		if true {
+			// raw text with end of lines
+			data = []byte(`
+* At ` + "`" + `go 1.17` + "`" + ` or higher:
+   * The ` + "`" + `go.mod` + "`" + ` file includes an explicit [` + "`" + `require` + "`" + `
+     directive](#go-mod-file-require) for each module that provides any package
+     transitively imported by a package or test in the main module. (At ` + "`" + `go
+     1.16` + "`" + ` and lower, an [indirect dependency](#glos-direct-dependency) is
+     included only if [minimal version selection](#minimal-version-selection)
+     would otherwise select a different version.) This extra information enables
+     [module graph pruning](#graph-pruning) and [lazy module
+     loading](#lazy-loading).
 `)
 		}
 

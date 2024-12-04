@@ -245,17 +245,39 @@ func (r *nodeRenderer) renderRawHTML(
 	return ast.WalkSkipChildren, nil
 }
 
+func rawWrite(writer util.BufWriter, source []byte, context *Context) {
+	n := 0
+	l := len(source)
+	for i := 0; i < l; i++ {
+		if source[i] == '\n' {
+			_, _ = writer.Write(source[i-n : i+1])
+			context.Pad(writer)
+			n = 0
+			continue
+		}
+		n++
+	}
+	if n != 0 {
+		_, _ = writer.Write(source[l-n:])
+	}
+}
+
 func (r *nodeRenderer) renderText(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	if !entering {
 		return ast.WalkContinue, nil
 	}
 	n := node.(*ast.Text)
-	segment := n.Segment
-	w.Write(segment.Value(source))
+	b := n.Segment.Value(source)
+	if n.IsRaw() {
+		rawWrite(w, b, r.context)
+	} else {
+		w.Write(b)
+	}
 
 	if n.HardLineBreak() {
 		_, _ = w.WriteString(`\
 `)
+		r.context.Pad(w)
 	} else if n.SoftLineBreak() {
 		_, _ = w.WriteString("\n")
 		r.context.Pad(w)
