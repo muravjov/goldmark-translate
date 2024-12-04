@@ -35,6 +35,7 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 
 	// inlines
 
+	reg.Register(ast.KindAutoLink, r.renderAutoLink)
 	reg.Register(ast.KindCodeSpan, r.renderCodeSpan)
 	reg.Register(ast.KindEmphasis, r.renderEmphasis)
 	reg.Register(ast.KindImage, r.renderImage)
@@ -175,6 +176,15 @@ func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Nod
 	} else {
 		r.context.PopStack()
 	}
+	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) renderAutoLink(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+	if !entering {
+		return ast.WalkContinue, nil
+	}
+	n := node.(*ast.AutoLink)
+	_, _ = w.Write(n.Label(source))
 	return ast.WalkContinue, nil
 }
 

@@ -296,7 +296,7 @@ The number of windows in my house is
 `)
 		}
 
-		if true {
+		if false {
 			data = []byte(`
 
 Insecure protocols (like ` + "`" + `http://` + "`" + ` and ` + "`" + `git://` + "`" + `) may only be used
@@ -346,6 +346,15 @@ if the module path is matched by the ` + "`" + `GOINSECURE` + "`" + ` environmen
 </table>
 
 As an example, consider ` + "`" + `golang.org/x/mod` + "`" + ` again.
+`)
+		}
+
+		if true {
+			data = []byte(`
+
+` + "`" + `GOSUMDB` + "`" + ` defaults to ` + "`" + `sum.golang.org` + "`" + `, the Go checksum database run by Google.
+See https://sum.golang.org/privacy for the service's privacy policy.
+
 `)
 		}
 
