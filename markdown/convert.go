@@ -12,7 +12,7 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-func Convert(source []byte, writer io.Writer, md2md bool, dump bool) error {
+func Convert(source []byte, writer io.Writer, md2md bool, dump bool, verbosePadding bool) error {
 	options := []goldmark.Option{
 		goldmark.WithParserOptions(
 			parser.WithHeadingAttribute(),
@@ -31,10 +31,12 @@ func Convert(source []byte, writer io.Writer, md2md bool, dump bool) error {
 	}
 
 	if md2md {
+		context := NewContext(verbosePadding)
+
 		options = append(options,
 			// we must overwrite default renderer (which is to html)
-			goldmark.WithRenderer(NewRenderer(util.Prioritized(
-				NewNodeRenderer(),
+			goldmark.WithRenderer(NewRenderer(context, util.Prioritized(
+				NewNodeRenderer(context),
 				400,
 			))),
 		)

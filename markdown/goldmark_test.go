@@ -218,6 +218,31 @@ that contains the ` + "`" + `go.mod` + "`" + ` file. The <dfn>main module</dfn> 
 containing the directory where the ` + "`" + `go` + "`" + ` command is invoked.
 `)
 		}
+
+		if true {
+			data = []byte(`
+
+* item 1
+
+  para 1.1
+  para 1.1 continuation
+
+  para 1.2
+
+  > bq 1
+  > bq para 1
+  
+  * subitem 1
+
+    para 1.2.1
+
+  * subitem 2
+
+    para 1.2.2
+
+para 2
+`)
+		}
 	} else {
 		var err error
 		fName := "/Users/ilya/opt/programming/catbo/stuff/medium/Monitoring1.md"
@@ -225,12 +250,13 @@ containing the directory where the ` + "`" + `go` + "`" + ` command is invoked.
 		assert.NoError(t, err)
 	}
 
-	md2md := true // false //
+	md2md := true          // false //
+	verbosePadding := true // false //
 
 	var writer io.Writer = os.Stderr // os.Stdout //
 	writer = ZeroBufWriter{writer}
 
-	err := Convert(data, writer, md2md, true)
+	err := Convert(data, writer, md2md, true, verbosePadding)
 	assert.NoError(t, err)
 }
 

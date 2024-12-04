@@ -24,7 +24,7 @@ func md2md(md2html bool, dumpAST bool, args []string) bool {
 	}
 	defer dstF.Close()
 
-	markdown.Convert(dat, dstF, !md2html, dumpAST)
+	markdown.Convert(dat, dstF, !md2html, dumpAST, false)
 
 	return true
 }

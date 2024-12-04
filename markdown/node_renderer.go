@@ -12,10 +12,13 @@ import (
 )
 
 type nodeRenderer struct {
+	context *Context
 }
 
-func NewNodeRenderer() NodeRenderer {
-	r := &nodeRenderer{}
+func NewNodeRenderer(context *Context) NodeRenderer {
+	r := &nodeRenderer{
+		context: context,
+	}
 
 	return r
 }
@@ -87,6 +90,10 @@ func (r *nodeRenderer) renderBlockquote(
 	w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
 	if entering {
 		_, _ = w.WriteString("> ")
+
+		r.context.PushStack("> ")
+	} else {
+		r.context.PopStack()
 	}
 	return ast.WalkContinue, nil
 }
@@ -109,6 +116,8 @@ func (r *nodeRenderer) renderFencedCodeBlock(
 			w.Write(language)
 		}
 		_, _ = w.WriteString("\n")
+		r.context.Pad(w)
+
 		r.writeLines(w, source, n)
 	} else {
 		_, _ = w.WriteString("```")
@@ -137,7 +146,10 @@ func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Nod
 		}
 
 		_, _ = w.WriteString(prefix)
+
+		r.context.PushStack(strings.Repeat(" ", len(prefix)))
 	} else {
+		r.context.PopStack()
 		if n.NextSibling() != nil {
 			sep := "\n"
 			if !list.IsTight {
@@ -145,6 +157,7 @@ func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Nod
 			}
 
 			_, _ = w.WriteString(sep)
+			r.context.Pad(w)
 		}
 	}
 	return ast.WalkContinue, nil
@@ -249,6 +262,7 @@ func (r *nodeRenderer) renderText(w util.BufWriter, source []byte, node ast.Node
 `)
 	} else if n.SoftLineBreak() {
 		_, _ = w.WriteString("\n")
+		r.context.Pad(w)
 	}
 
 	return ast.WalkContinue, nil

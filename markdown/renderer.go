@@ -18,12 +18,15 @@ type Renderer struct {
 	nodeRendererFuncs    []NodeRendererFunc
 
 	initSync sync.Once
+
+	context *Context
 }
 
-func NewRenderer(ps ...util.PrioritizedValue) goldrender.Renderer {
+func NewRenderer(context *Context, ps ...util.PrioritizedValue) goldrender.Renderer {
 	r := &Renderer{
 		NodeRenderers:        ps,
 		nodeRendererFuncsTmp: map[ast.NodeKind]NodeRendererFunc{},
+		context:              context,
 	}
 
 	return r
@@ -76,8 +79,9 @@ func (r *Renderer) Render(w io.Writer, source []byte, root ast.Node) error {
 			s = sF
 		}
 
-		if !entering && n.Parent() == root && n.NextSibling() != nil {
+		if !entering && n.Type() == ast.TypeBlock && n.NextSibling() != nil {
 			_, _ = writer.WriteString("\n\n")
+			r.context.Pad(writer)
 		}
 
 		return s, nil
