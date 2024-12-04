@@ -274,6 +274,10 @@ The number of windows in my house is
 
 The number of windows in my house is
 * The number of doors is 6.
+
+The number of windows in my house is
+
+* The number of doors is 6.
 `)
 		}
 
