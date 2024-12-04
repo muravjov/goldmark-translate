@@ -145,6 +145,11 @@ func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Nod
 			prefix = string(list.Marker) + " "
 		}
 
+		if diff := n.(*ast.ListItem).Offset - len(prefix); diff > 0 {
+			// golang docs style: if offset more then just prefix, let's pad it with spaces at left
+			prefix = strings.Repeat(" ", diff) + prefix
+		}
+
 		_, _ = w.WriteString(prefix)
 
 		r.context.PushStack(strings.Repeat(" ", len(prefix)))

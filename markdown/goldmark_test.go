@@ -123,6 +123,8 @@ func TestMarkdown2Markdown(t *testing.T) {
 	if true {
 
 		if false {
+			// :TODO: improper rendering
+
 			data = []byte(`
 > Lorem ipsum dolor
 sit amet.
@@ -133,8 +135,7 @@ sit amet.
 		}
 
 		if false {
-			// :TODO: lists with non trivial blocks (not a para or multiple blocks)
-			// is rendered improperly: intendation with spaces needed
+			// :TODO: improper rendering
 
 			// https://spec.commonmark.org/dingus/?text=1.%20a%0A%0A%20%202.%20b%0A%0A%20%20%20%203.%20c%0A
 			// - commonmark.js parses para-s in list items into para-s
@@ -182,7 +183,7 @@ migrating projects to modules, and other topics, see the blog series starting
 with [Using Go Modules](/blog/using-go-modules).`)
 		}
 
-		if true {
+		if false {
 			// HardLineBreak
 			data = []byte(`
 foo  
@@ -219,7 +220,8 @@ containing the directory where the ` + "`" + `go` + "`" + ` command is invoked.
 `)
 		}
 
-		if true {
+		if false {
+			// nested blocks (in lists and blockquotes)
 			data = []byte(`
 
 * item 1
@@ -247,6 +249,19 @@ para 2
 
 `)
 		}
+
+		if true {
+			// list custom offsets
+			data = []byte(`
+
+* At ` + "`" + `go 1.21` + "`" + ` or higher:
+   * The ` + "`" + `go` + "`" + ` line declares a required minimum version of Go to use with this module.
+   * The ` + "`" + `go` + "`" + ` line must be greater than or equal to the ` + "`" + `go` + "`" + ` line of all dependencies.
+   * The ` + "`" + `go` + "`" + ` command no longer attempts to maintain compatibility with the previous older version of Go.
+   * The ` + "`" + `go` + "`" + ` command is more careful about keeping checksums of ` + "`" + `go.mod` + "`" + ` files in the ` + "`" + `go.sum` + "`" + ` file.
+`)
+		}
+
 	} else {
 		var err error
 		fName := "/Users/ilya/opt/programming/catbo/stuff/medium/Monitoring1.md"
