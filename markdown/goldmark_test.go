@@ -349,11 +349,24 @@ As an example, consider ` + "`" + `golang.org/x/mod` + "`" + ` again.
 `)
 		}
 
-		if true {
+		if false {
 			data = []byte(`
 
 ` + "`" + `GOSUMDB` + "`" + ` defaults to ` + "`" + `sum.golang.org` + "`" + `, the Go checksum database run by Google.
 See https://sum.golang.org/privacy for the service's privacy policy.
+
+`)
+		}
+
+		if true {
+			data = []byte(`
+
+If all imported packages can be found without loading the module graph, the
+` + "`" + `go` + "`" + ` command then loads the ` + "`" + `go.mod` + "`" + ` files for _only_ the modules containing
+those packages, and their requirements are checked against the requirements of
+the main module to ensure that they are locally consistent. (Inconsistencies can
+arise due to version-control merges, hand-edits, and changes in modules that
+have been [replaced](#go-mod-file-replace) using local filesystem paths.)
 
 `)
 		}

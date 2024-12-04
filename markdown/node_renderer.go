@@ -199,11 +199,23 @@ func (r *nodeRenderer) renderCodeSpan(w util.BufWriter, source []byte, n ast.Nod
 }
 
 func (r *nodeRenderer) renderEmphasis(
-	w util.BufWriter, _ []byte, node ast.Node, _ bool) (ast.WalkStatus, error) {
+	w util.BufWriter, source []byte, node ast.Node, _ bool) (ast.WalkStatus, error) {
 	n := node.(*ast.Emphasis)
 
 	// * or _
-	_, _ = w.WriteString(strings.Repeat("*", n.Level))
+	marker := "*"
+
+	// :TRICKY: better to support .Marker attribute in ast.Emphasis struct, saving it
+	// in last successful emphasisDelimiterProcessor.CanOpenCloser() from opener.Char and
+	// initialising it in emphasisDelimiterProcessor.OnMatch()
+	if t, ok := n.FirstChild().(*ast.Text); ok {
+		// * or _ should not be followed by whitespace, let's get the previous character
+		if pos := t.Segment.Start - 1; pos >= 0 && pos < len(source) {
+			marker = string(source[pos])
+		}
+	}
+
+	_, _ = w.WriteString(strings.Repeat(marker, n.Level))
 	return ast.WalkContinue, nil
 }
 
