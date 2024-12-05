@@ -33,7 +33,7 @@ func openDst(dstFilename string) (*os.File, bool) {
 		return os.Stdout, true
 	}
 
-	f, err := os.Open(dstFilename)
+	f, err := os.Create(dstFilename)
 	if err != nil {
 		util.Errorf("error while opening file %v: %v", dstFilename, err)
 		return nil, false
