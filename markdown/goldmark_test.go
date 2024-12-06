@@ -371,7 +371,7 @@ have been [replaced](#go-mod-file-replace) using local filesystem paths.)
 `)
 		}
 
-		if true {
+		if false {
 			// CodeBlock and FencedCodeBlock
 			data = []byte(`
 
@@ -410,6 +410,21 @@ para after 2
   ~~~
 
 para after 3
+`)
+		}
+
+		if true {
+			// nested HTMLBlock
+			data = []byte(`
+
+* list head
+  para before
+
+  <div id="foo"
+    class="bar">
+  </div>
+
+  para after
 `)
 		}
 

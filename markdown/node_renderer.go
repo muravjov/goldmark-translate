@@ -176,6 +176,10 @@ func (r *nodeRenderer) renderHTMLBlock(
 		for i := 0; i < l; i++ {
 			line := n.Lines().At(i)
 			w.Write(line.Value(source))
+
+			if n.HasClosure() || i != l-1 {
+				r.context.Pad(w)
+			}
 		}
 	} else {
 		if n.HasClosure() {
