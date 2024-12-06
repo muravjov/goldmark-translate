@@ -89,7 +89,7 @@ func (r *Renderer) Render(w io.Writer, source []byte, root ast.Node) error {
 			} else if list, ok := n.NextSibling().(*ast.List); ok && (!list.IsOrdered() || list.Start == 1) && !list.HasBlankPreviousLines() {
 				// In CommonMark, we do allow lists to interrupt paragraphss
 				sep = "\n"
-			} else if slices.Contains([]ast.NodeKind{ast.KindHTMLBlock, ast.KindCodeBlock}, kind) {
+			} else if slices.Contains([]ast.NodeKind{ast.KindHTMLBlock, ast.KindCodeBlock, ast.KindThematicBreak}, kind) {
 				// htmlBlockParser puts lines and ClosureLine with "\n", so we need to add just one
 				sep = "\n"
 			}

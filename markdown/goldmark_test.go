@@ -414,7 +414,7 @@ para after 3
 		}
 
 		if true {
-			// nested HTMLBlock
+			// nested HTMLBlock & ThematicBreak
 			data = []byte(`
 
 * list head
@@ -425,6 +425,10 @@ para after 3
   </div>
 
   para after
+
+  ***
+ 
+  para after thematic break
 `)
 		}
 

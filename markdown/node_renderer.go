@@ -33,6 +33,7 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindHTMLBlock, r.renderHTMLBlock)
 	reg.Register(ast.KindList, r.renderList)
 	reg.Register(ast.KindListItem, r.renderListItem)
+	reg.Register(ast.KindThematicBreak, r.renderThematicBreak)
 
 	// inlines
 
@@ -221,6 +222,15 @@ func (r *nodeRenderer) renderListItem(w util.BufWriter, source []byte, n ast.Nod
 	} else {
 		r.context.PopStack()
 	}
+	return ast.WalkContinue, nil
+}
+
+func (r *nodeRenderer) renderThematicBreak(w util.BufWriter, _ []byte, _ ast.Node, entering bool) (ast.WalkStatus, error) {
+	if !entering {
+		return ast.WalkContinue, nil
+	}
+	_, _ = w.WriteString("***\n")
+
 	return ast.WalkContinue, nil
 }
 
