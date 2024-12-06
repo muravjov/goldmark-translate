@@ -28,6 +28,7 @@ func (r *nodeRenderer) RegisterFuncs(reg NodeRendererFuncRegisterer) {
 
 	reg.Register(ast.KindHeading, r.renderHeading)
 	reg.Register(ast.KindBlockquote, r.renderBlockquote)
+	reg.Register(ast.KindCodeBlock, r.renderCodeBlock)
 	reg.Register(ast.KindFencedCodeBlock, r.renderFencedCodeBlock)
 	reg.Register(ast.KindHTMLBlock, r.renderHTMLBlock)
 	reg.Register(ast.KindList, r.renderList)
@@ -100,19 +101,59 @@ func (r *nodeRenderer) renderBlockquote(
 	return ast.WalkContinue, nil
 }
 
-func (r *nodeRenderer) writeLines(w util.BufWriter, source []byte, n ast.Node) {
+func (r *nodeRenderer) writeLines(w util.BufWriter, source []byte, n ast.Node, codeBlock bool) {
 	l := n.Lines().Len()
 	for i := 0; i < l; i++ {
 		line := n.Lines().At(i)
-		w.Write(line.Value(source))
+		b := line.Value(source)
+		if codeBlock && !bytes.Equal(b, []byte{'\n'}) {
+			_, _ = w.WriteString("    ") // 4 spaces
+		}
+		_, _ = w.Write(b)
+		if !(codeBlock && (i == l-1)) {
+			r.context.Pad(w)
+		}
 	}
+}
+
+func (r *nodeRenderer) renderCodeBlock(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	if !entering {
+		return ast.WalkContinue, nil
+	}
+	r.writeLines(w, source, n, true)
+
+	return ast.WalkContinue, nil
 }
 
 func (r *nodeRenderer) renderFencedCodeBlock(
 	w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	n := node.(*ast.FencedCodeBlock)
+
+	fenceMarker := "```"
+	lines := n.Lines()
+	if l := lines.Len(); l > 0 {
+		pos := lines.At(l - 1).Stop
+		// quoting:
+		// The closing code fence may be preceded by up to three spaces of indentation, and may be followed only by spaces or tabs, which are ignored.
+		for i := pos; i < len(source); i++ {
+			if source[i] == ' ' {
+				continue
+			}
+
+			if i-pos > 3 {
+				break
+			}
+
+			if source[i] != '~' {
+				break
+			}
+
+			fenceMarker = "~~~"
+		}
+	}
+
 	if entering {
-		_, _ = w.WriteString("```")
+		_, _ = w.WriteString(fenceMarker)
 		language := n.Language(source)
 		if language != nil {
 			w.Write(language)
@@ -120,9 +161,9 @@ func (r *nodeRenderer) renderFencedCodeBlock(
 		_, _ = w.WriteString("\n")
 		r.context.Pad(w)
 
-		r.writeLines(w, source, n)
+		r.writeLines(w, source, n, false)
 	} else {
-		_, _ = w.WriteString("```")
+		_, _ = w.WriteString(fenceMarker)
 	}
 	return ast.WalkContinue, nil
 }

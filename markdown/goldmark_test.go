@@ -358,7 +358,7 @@ See https://sum.golang.org/privacy for the service's privacy policy.
 `)
 		}
 
-		if true {
+		if false {
 			data = []byte(`
 
 If all imported packages can be found without loading the module graph, the
@@ -368,6 +368,48 @@ the main module to ensure that they are locally consistent. (Inconsistencies can
 arise due to version-control merges, hand-edits, and changes in modules that
 have been [replaced](#go-mod-file-replace) using local filesystem paths.)
 
+`)
+		}
+
+		if true {
+			// CodeBlock and FencedCodeBlock
+			data = []byte(`
+
+para
+
+    a simple
+      indented code block
+
+    next chunk
+
+
+    next chunk 2
+
+para after
+
+~~~yaml
+global:
+
+route:
+  group_by: ['alertname']
+  receiver: 'telepush'
+~~~
+
+para after 2
+
+* list item head para
+  
+      code block
+	  code block line 2
+  
+  list item para
+
+  ~~~yaml
+  receivers:
+    - name: 'telepush'
+  ~~~
+
+para after 3
 `)
 		}
 
