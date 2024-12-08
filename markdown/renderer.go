@@ -92,13 +92,14 @@ func (r *Renderer) Render(w io.Writer, source []byte, root ast.Node) error {
 				sep = "\n"
 			} else if slices.Contains([]ast.NodeKind{ast.KindHTMLBlock, ast.KindCodeBlock, ast.KindThematicBreak}, kind) {
 				// htmlBlockParser puts lines and ClosureLine with "\n", so we need to add just one
+				if pad := barePaddingLine(r.context); pad != "" {
+					_, _ = writer.WriteString(pad)
+				}
 				sep = "\n"
 			}
 
 			if sep == "\n\n" {
-				// if padding stack has a blockquote then we have to pad it after every newline
-				pad := strings.TrimRight(strings.Join(r.context.PaddingStack, ""), " \t\n\x0b\x0c\x0d")
-				if pad != "" {
+				if pad := barePaddingLine(r.context); pad != "" {
 					_, _ = writer.WriteString("\n" + pad)
 					sep = "\n"
 				}
@@ -114,4 +115,9 @@ func (r *Renderer) Render(w io.Writer, source []byte, root ast.Node) error {
 		return err
 	}
 	return writer.Flush()
+}
+
+func barePaddingLine(context *Context) string {
+	// if padding stack has a blockquote then we have to pad it after every newline
+	return strings.TrimRight(strings.Join(context.PaddingStack, ""), " \t\n\x0b\x0c\x0d")
 }

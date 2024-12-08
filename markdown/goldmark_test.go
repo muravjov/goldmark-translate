@@ -244,7 +244,7 @@ para 2
 `)
 		}
 
-		if true {
+		if false {
 			// list custom offsets
 			data = []byte(`
 
@@ -407,22 +407,22 @@ para after 3
 `)
 		}
 
-		if false {
+		if true {
 			// nested HTMLBlock & ThematicBreak
 			data = []byte(`
 
-* list head
-  para before
-
-  <div id="foo"
-    class="bar">
-  </div>
-
-  para after
-
-  ***
- 
-  para after thematic break
+> list head
+> para before
+>
+> <div id="foo"
+>   class="bar">
+> </div>
+>
+> para after
+>
+> ***
+>
+> para after thematic break
 `)
 		}
 
