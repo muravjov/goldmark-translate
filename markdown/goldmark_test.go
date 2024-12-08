@@ -123,8 +123,6 @@ func TestMarkdown2Markdown(t *testing.T) {
 	if true {
 
 		if false {
-			// :TODO: improper rendering
-
 			data = []byte(`
 > Lorem ipsum dolor
 sit amet.
@@ -135,8 +133,6 @@ sit amet.
 		}
 
 		if false {
-			// :TODO: improper rendering
-
 			// https://spec.commonmark.org/dingus/?text=1.%20a%0A%0A%20%202.%20b%0A%0A%20%20%20%203.%20c%0A
 			// - commonmark.js parses para-s in list items into para-s
 			// - goldmark parses para-s in list itemes into TextBlock-s
@@ -162,8 +158,6 @@ sit amet.
 		}
 
 		if false {
-			// :TODO: blockquotes with non trivial blocks (not a para or multiple blocks)
-			// is rendered improperly: intendation with "> " needed
 			data = []byte(`
 > fdsa
 > fds
@@ -250,7 +244,7 @@ para 2
 `)
 		}
 
-		if false {
+		if true {
 			// list custom offsets
 			data = []byte(`
 
@@ -413,7 +407,7 @@ para after 3
 `)
 		}
 
-		if true {
+		if false {
 			// nested HTMLBlock & ThematicBreak
 			data = []byte(`
 
